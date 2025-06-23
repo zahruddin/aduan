@@ -86,7 +86,7 @@ $pengaduan = $koneksi->query($sql);
               <th>Kontak</th>
               <th>Kategori</th>
               <th>Isi Pengaduan</th>
-              <th>Status</th>
+              <!-- <th>Status</th> -->
               <th>Tanggal</th>
               <th>Aksi</th>
             </tr>
@@ -99,26 +99,11 @@ $pengaduan = $koneksi->query($sql);
                 <td><?= htmlspecialchars($row['kontak']) ?></td>
                 <td><?= htmlspecialchars($row['nama_kategori']) ?></td>
                 <td><?= nl2br(htmlspecialchars($row['isi_pengaduan'])) ?></td>
-                <td>
-                  <?php if ($row['status'] == 'Menunggu'): ?>
-                    <span class="badge bg-warning text-dark"><?= $row['status'] ?></span>
-                  <?php elseif ($row['status'] == 'Diproses'): ?>
-                    <span class="badge bg-primary"><?= $row['status'] ?></span>
-                  <?php else: ?>
-                    <span class="badge bg-success"><?= $row['status'] ?></span>
-                  <?php endif; ?>
-                </td>
+                
                 <td><?= date('d-m-Y H:i', strtotime($row['tanggal'])) ?></td>
                 <td>
                 <form method="post" action="aksi_pengaduan.php" class="d-flex gap-1 flex-wrap">
                   <input type="hidden" name="id_pengaduan" value="<?= $row['id'] ?>">
-
-                  <button type="submit" name="aksi" value="diproses" class="btn btn-sm btn-primary"
-                    onclick="return confirm('Ubah status menjadi Diproses?')">Diproses</button>
-
-                  <button type="submit" name="aksi" value="selesai" class="btn btn-sm btn-success"
-                    onclick="return confirm('Ubah status menjadi Selesai?')">Selesai</button>
-
                   <button type="submit" name="aksi" value="hapus" class="btn btn-sm btn-danger"
                     onclick="return confirm('Yakin ingin menghapus aduan ini?')">Hapus</button>
                 </form>
