@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 if (isset($_SESSION['user_id'])) {
   header("Location: admin_dashboard.php");
@@ -11,26 +7,25 @@ if (isset($_SESSION['user_id'])) {
 
 require 'koneksi.php';
 
-// Ambil data dari form
-$username = trim($_POST['username']);
-$password = trim($_POST['password']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username'] ?? '');
+    $password = trim($_POST['password'] ?? '');
 
-// Cek pengguna
-$stmt = $koneksi->prepare("SELECT * FROM users WHERE username = ?");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+    $stmt = $koneksi->prepare("SELECT id, username, password, nama_lengkap FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->bind_result($id, $user_name, $hashed_password, $nama_lengkap);
 
-if ($user && password_verify($password, $user['password'])) {
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['username'] = $user['username'];
-    $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
-    header("Location: admin_dashboard.php");
-    exit;
-} else {
-    $_SESSION['error'] = "Username atau password salah!";
-    header("Location: login.php");
-    exit;
+    if ($stmt->fetch() && password_verify($password, $hashed_password)) {
+        $_SESSION['user_id'] = $id;
+        $_SESSION['username'] = $user_name;
+        $_SESSION['nama_lengkap'] = $nama_lengkap;
+        header("Location: admin_dashboard.php");
+        exit;
+    } else {
+        $_SESSION['error'] = "Username atau password salah!";
+        header("Location: login.php");
+        exit;
+    }
 }
 ?>
