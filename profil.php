@@ -64,8 +64,15 @@ if (!isset($_SESSION['user_id'])) {
     $stmt = $koneksi->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    $stmt->bind_result($id, $username, $password, $nama_lengkap);
+    $stmt->fetch();
+    $user = [
+    'id' => $id,
+    'username' => $username,
+    'password' => $password,
+    'nama_lengkap' => $nama_lengkap,
+    ];
+
 
     // Edit Profil
     if (isset($_POST['update_profil'])) {
