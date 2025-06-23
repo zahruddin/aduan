@@ -71,9 +71,7 @@ session_start();
     <div class="card shadow mx-auto" style="max-width: 600px;">
        <?php if (isset($_GET['success']) && $_GET['success'] == 1 && isset($_GET['kode'])): ?>
           <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Pengaduan berhasil dikirim!</strong><br />
-            Kode Aduan Anda: <strong><?= htmlspecialchars($_GET['kode']); ?></strong><br />
-            Simpan kode ini untuk pengecekan status pengaduan.
+            <strong>Pengaduan berhasil dikirim!</strong>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
           </div>
         <?php endif; ?>
