@@ -8,11 +8,24 @@ if (!isset($_SESSION['user_id'])) {
   exit;
 }
 
-// Ambil data pengaduan
-$sql = "SELECT p.*, k.nama_kategori FROM pengaduan p 
+// Konfigurasi pagination
+$limit = 10; // jumlah data per halaman
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$start = ($page > 1) ? ($page * $limit) - $limit : 0;
+
+// Hitung total data
+$totalQuery = $koneksi->query("SELECT COUNT(*) as total FROM pengaduan");
+$totalData = $totalQuery->fetch_assoc()['total'];
+$totalPages = ceil($totalData / $limit);
+
+// Ambil data sesuai halaman
+$sql = "SELECT p.*, k.nama_kategori 
+        FROM pengaduan p 
         JOIN kategori_pengaduan k ON p.kategori_id = k.id
-        ORDER BY p.tanggal DESC";
+        ORDER BY p.tanggal DESC
+        LIMIT $start, $limit";
 $pengaduan = $koneksi->query($sql);
+
 ?>
 
 <!DOCTYPE html>
@@ -52,6 +65,7 @@ $pengaduan = $koneksi->query($sql);
       </div>
       <nav class="mt-3 mt-md-0">
         <span class="me-3">Halo, <?= htmlspecialchars($_SESSION['nama_lengkap']) ?></span>
+        <a href="profil.php" class="btn btn-outline-light text-light">Kelola Profile</a>
         <a href="logout.php" class="btn btn-light text-dark">Logout</a>
       </nav>
     </div>
@@ -67,20 +81,20 @@ $pengaduan = $koneksi->query($sql);
           <thead class="table-dark">
             <tr>
               <th>No</th>
-              <th>Kode Aduan</th>
+              <!-- <th>Kode Aduan</th> -->
               <th>Nama</th>
               <th>Kontak</th>
               <th>Kategori</th>
               <th>Isi Pengaduan</th>
               <th>Status</th>
               <th>Tanggal</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <?php $no = 1; while ($row = $pengaduan->fetch_assoc()): ?>
+              <?php $no = $start + 1; while ($row = $pengaduan->fetch_assoc()): ?>
               <tr>
                 <td><?= $no++ ?></td>
-                <td><?= htmlspecialchars($row['kode_aduan']) ?></td>
                 <td><?= htmlspecialchars($row['nama_lengkap']) ?></td>
                 <td><?= htmlspecialchars($row['kontak']) ?></td>
                 <td><?= htmlspecialchars($row['nama_kategori']) ?></td>
@@ -95,10 +109,45 @@ $pengaduan = $koneksi->query($sql);
                   <?php endif; ?>
                 </td>
                 <td><?= date('d-m-Y H:i', strtotime($row['tanggal'])) ?></td>
+                <td>
+                <form method="post" action="aksi_pengaduan.php" class="d-flex gap-1 flex-wrap">
+                  <input type="hidden" name="id_pengaduan" value="<?= $row['id'] ?>">
+
+                  <button type="submit" name="aksi" value="diproses" class="btn btn-sm btn-primary"
+                    onclick="return confirm('Ubah status menjadi Diproses?')">Diproses</button>
+
+                  <button type="submit" name="aksi" value="selesai" class="btn btn-sm btn-success"
+                    onclick="return confirm('Ubah status menjadi Selesai?')">Selesai</button>
+
+                  <button type="submit" name="aksi" value="hapus" class="btn btn-sm btn-danger"
+                    onclick="return confirm('Yakin ingin menghapus aduan ini?')">Hapus</button>
+                </form>
+              </td>
               </tr>
             <?php endwhile; ?>
           </tbody>
         </table>
+        <nav>
+          <ul class="pagination justify-content-center mt-4">
+            <?php if ($page > 1): ?>
+              <li class="page-item">
+                <a class="page-link" href="?page=<?= $page - 1 ?>">Sebelumnya</a>
+              </li>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+              <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+              </li>
+            <?php endfor; ?>
+
+            <?php if ($page < $totalPages): ?>
+              <li class="page-item">
+                <a class="page-link" href="?page=<?= $page + 1 ?>">Berikutnya</a>
+              </li>
+            <?php endif; ?>
+          </ul>
+        </nav>
       </div>
     <?php else: ?>
       <div class="alert alert-info">Belum ada pengaduan yang masuk.</div>

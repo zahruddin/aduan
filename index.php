@@ -65,39 +65,6 @@ session_start();
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="bg-light py-5">
-    <div class="container">
-      <h3 class="text-center mb-4">Mengapa Gunakan Layanan Kami?</h3>
-      <div class="row text-center">
-        <div class="col-md-4 mb-4">
-          <div class="card shadow h-100">
-            <div class="card-body">
-              <h5 class="card-title">Mudah & Cepat</h5>
-              <p class="card-text">Pengisian formulir hanya butuh waktu kurang dari 5 menit.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4">
-          <div class="card shadow h-100">
-            <div class="card-body">
-              <h5 class="card-title">Transparan</h5>
-              <p class="card-text">Semua pengaduan akan ditampilkan dan diproses dengan terbuka.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4">
-          <div class="card shadow h-100">
-            <div class="card-body">
-              <h5 class="card-title">Langsung Ditindaklanjuti</h5>
-              <p class="card-text">Pengaduan Anda akan segera diteruskan ke bagian terkait.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Formulir Pengaduan -->
   
   <section id="form-pengaduan" class="container my-5">
