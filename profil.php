@@ -14,10 +14,11 @@ $alert = "";
 if (isset($_POST['update_profil'])) {
   $nama_lengkap = trim($_POST['nama_lengkap']);
   $username = trim($_POST['username']);
+  $email = trim($_POST['email']);
 
   if (!empty($nama_lengkap) && !empty($username)) {
-    $stmt = $koneksi->prepare("UPDATE users SET nama_lengkap = ?, username = ? WHERE id = ?");
-    $stmt->bind_param("ssi", $nama_lengkap, $username, $user_id);
+    $stmt = $koneksi->prepare("UPDATE users SET nama_lengkap = ?, username = ?, email = ? WHERE id = ?");
+    $stmt->bind_param("sssi", $nama_lengkap, $username, $email, $user_id);
     if ($stmt->execute()) {
       $alert = '<div class="alert alert-success">Profil berhasil diperbarui.</div>';
       $_SESSION['nama_lengkap'] = $nama_lengkap;
@@ -66,10 +67,10 @@ if (isset($_POST['ubah_password'])) {
 }
 
 // Ambil data user terbaru
-$stmt = $koneksi->prepare("SELECT nama_lengkap, username FROM users WHERE id = ?");
+$stmt = $koneksi->prepare("SELECT nama_lengkap, username, email FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
-$stmt->bind_result($nama_lengkap, $username);
+$stmt->bind_result($nama_lengkap, $username, $email);
 $stmt->fetch();
 $stmt->close();
 ?>
@@ -79,7 +80,7 @@ $stmt->close();
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Profil Admin</title>
+  <title>Profil </title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     body {
@@ -100,22 +101,7 @@ $stmt->close();
 </head>
 <body class="bg-light text-dark d-flex flex-column min-vh-100">
 
-  <!-- Header -->
-  <header class="bg-merah text-white py-4 shadow-sm">
-    <div class="container d-flex flex-wrap justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <a href="index.php">
-            <img src="logo.png" alt="Logo Kecamatan" class="me-2" style="height: 40px;" />
-        </a>
-        <h1 class="h4 mb-0">Dashboard Admin</h1>
-      </div>
-      <nav class="mt-3 mt-md-0">
-        <span class="me-3">Halo, <?= htmlspecialchars($nama_lengkap) ?></span>
-        <a href="admin_dashboard.php" class="btn btn-light text-dark">Dashboard</a>
-        <a href="logout.php" class="btn btn-outline-light text-light">Logout</a>
-      </nav>
-    </div>
-  </header>
+<?php include "header.php";?>
 
   <!-- Konten -->
   <main class="container my-5 flex-grow-1">
@@ -138,6 +124,10 @@ $stmt->close();
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" name="username" id="username" class="form-control" value="<?= htmlspecialchars($username) ?>" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" id="username" class="form-control" value="<?= htmlspecialchars($email) ?>" required>
           </div>
           <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </form>
